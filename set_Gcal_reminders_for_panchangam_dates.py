@@ -90,7 +90,15 @@ def panchanga_date_converter():
         shaka_year = today.year - 78
         url1 = 'https://www.drikpanchang.com/kannada/panchangam/kannada-month-panchangam.html?lunar-date=' + panchanga_dd + '/' + panchanga_month_choice + '/' + str(
             shaka_year)
-        html_text = requests.get(url1).text
+        print(f"url1: {url1}")
+        headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+                      "(KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9",
+        }
+
+        html_text = requests.get(url1, headers=headers).text
+        print(html_text)
         soup = BeautifulSoup(html_text, 'lxml')
         date_text = soup.find('h2', class_='dpCardTitle dpLeftGridTitle').text
 
@@ -103,10 +111,16 @@ def panchanga_date_converter():
           f'this is correct\n')
 
     count = 1
-    while count < 30:
+    # while count < 30:
+    while count < 3:
         url = 'https://www.drikpanchang.com/kannada/panchangam/kannada-month-panchangam.html?lunar-date=' + panchanga_dd + '/' + panchanga_month_choice + '/' + str(
             shaka_year + count)
-        html_text = requests.get(url).text
+        headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+                      "(KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9",
+        }
+        html_text = requests.get(url, headers=headers).text
         soup = BeautifulSoup(html_text, 'lxml')
         date_text = soup.find('h2', class_='dpCardTitle dpLeftGridTitle').text
         converted_py_date = convert_date_text_to_py_date(date_text)
@@ -151,7 +165,7 @@ def set_gcal_reminders():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file('cred.json.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file('creds.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         # with open('token.json', 'w') as token:
